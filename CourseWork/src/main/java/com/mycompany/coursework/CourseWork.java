@@ -3,7 +3,7 @@
  */
 
 package com.mycompany.coursework;
-import com.mycompany.coursework.view.entryWindow;
+import view.entryWindow;
 /**
  *
  * @author Admin
