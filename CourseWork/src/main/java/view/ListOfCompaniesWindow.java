@@ -4,15 +4,15 @@
  */
 package view;
 import Controllers.CompanyController;
-import Controllers.UrlController;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import java.sql.*;
+import Storage.CompanyStorage;
 public class ListOfCompaniesWindow extends javax.swing.JFrame {
-    CompanyController specController = new CompanyController();
+    CompanyStorage userStorage = new CompanyStorage();
     public ListOfCompaniesWindow(JTable table, String buttonText) {
         initComponents();
-        specController.loadData(jTable2, buttonText);
+        userStorage.loadData(jTable2, buttonText);
     }
 
     @SuppressWarnings("unchecked")
@@ -45,14 +45,9 @@ public class ListOfCompaniesWindow extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Предприятие"
-            })
-            {
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
+                "Название", "Рейтинг"
             }
-        );
+        ));
         jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable2MouseClicked(evt);
@@ -83,7 +78,7 @@ public class ListOfCompaniesWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_exitLabelMousePressed
 
     private void exitLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitLabelMouseClicked
-        listOfSpecsWindow lstSpecs = new listOfSpecsWindow();
+        ListOfSpecsWindow lstSpecs = new ListOfSpecsWindow();
         lstSpecs.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_exitLabelMouseClicked
@@ -97,32 +92,12 @@ public class ListOfCompaniesWindow extends javax.swing.JFrame {
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
     int row = jTable2.rowAtPoint(evt.getPoint());
     int col = jTable2.columnAtPoint(evt .getPoint());
-    UrlController urlHandling = new UrlController();
-    String databaseURL = urlHandling.getDatabaseURL();
         if (row >= 0 && col >= 0) {
             Object value = jTable2.getValueAt(row, col);
             if (value != null) {
                 String cellText = value.toString();
-                try {
-                    Connection connection = DriverManager.getConnection(databaseURL, "root", "12345678a-");
-                    Statement stmt = connection.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM company WHERE name = '" + cellText + "'");
-                  if (rs.next()) {
-                    String companyName = rs.getString("name");
-                    String link = rs.getString("link");
-                    int isPaid = rs.getInt("isPaid");
-                    int hasIntership = rs.getInt("hasIntership");
-                    CompanyView companyView = new CompanyView(companyName, link, isPaid, hasIntership );
-                    companyView.setVisible(true);
-                } else {
-                        System.out.println("Совпадение не найдено");
-                    }
-                    rs.close();
-                    stmt.close();
-                    connection.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+                CompanyController companyController = new CompanyController();
+                companyController.openCompanyView(cellText);
             }
         }
     }//GEN-LAST:event_jTable2MouseClicked

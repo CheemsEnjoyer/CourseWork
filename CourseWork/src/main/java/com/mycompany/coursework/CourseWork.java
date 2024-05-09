@@ -3,7 +3,7 @@
  */
 
 package com.mycompany.coursework;
-import view.entryWindow;
+import view.EntryWindow;
 /**
  *
  * @author Admin
@@ -11,6 +11,6 @@ import view.entryWindow;
 public class CourseWork {
 
     public static void main(String[] args) {
-        new entryWindow().setVisible(true);
+        new EntryWindow().setVisible(true);
     }
 }

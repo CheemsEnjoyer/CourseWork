@@ -9,10 +9,9 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import view.ListOfCompaniesWindow;
-/**
- *
- * @author Admin
- */
+import view.CompanyWindow;
+import URL.URL;
+
 public class CompanyController {
     private DefaultTableModel model;
     private JTable table;
@@ -22,43 +21,51 @@ public class CompanyController {
     public CompanyController() {
 
     }
-    public void loadData(JTable table, String buttonText) {
-        UrlController urlHandling = new UrlController();
-        String databaseURL = urlHandling.getDatabaseURL();
-        try {
-            Connection connection = DriverManager.getConnection(databaseURL, "root", "12345678a-");
-            String companiesQuery = "SELECT GROUP_CONCAT(c.name) AS company_names " +
-                                    "FROM company_has_specialization chi " +
-                                    "JOIN company c ON chi.company_id = c.id " +
-                                    "JOIN specialization s ON chi.specialization_id = s.id " +
-                                    "WHERE s.name = ?";
-            PreparedStatement companiesStatement = connection.prepareStatement(companiesQuery);
-            companiesStatement.setString(1, buttonText);
-            ResultSet resultSet = companiesStatement.executeQuery();
 
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0);
-
-            if (resultSet.next()) {
-                String companies = resultSet.getString("company_names");
-                //System.out.println("Companies for institute " + buttonText + ": " + companies);
-                String[] companyArray = companies.split(",");
-                for (String companyName : companyArray) {
-                    if (!companyName.isEmpty()) {
-                        Object[] rowData = {companyName};
-                        model.addRow(rowData);
+    public void openCompanyView(String cellText) {
+        URL url = new URL();
+        String databaseURL = url.Url;
+        try (Connection connection = DriverManager.getConnection(databaseURL, "root", "12345678a-")) {
+            String query = "SELECT * FROM company WHERE name = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, cellText);
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        String companyName = rs.getString("name");
+                        String link = rs.getString("link");
+                        int isPaid = rs.getInt("isPaid");
+                        int hasIntership = rs.getInt("hasIntership");
+                        int hasDistant = rs.getInt("hasDistant");
+                        CompanyWindow companyView = new CompanyWindow(companyName, link, isPaid, hasIntership, hasDistant);
+                        companyView.setVisible(true);
                     }
                 }
             }
-
-            connection.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
 
+    public int getCompanyIdByName(String companyName) {
+        int companyId = -1;
+        URL url = new URL();
+        String databaseURL = url.Url;
+        try {
+            Connection connection = DriverManager.getConnection(databaseURL, "root", "12345678a-");
+            String sqlQuery = "SELECT id FROM company WHERE name = ?";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, companyName);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                companyId = resultSet.getInt("id");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
 
+        return companyId;
+    }
 
 
 

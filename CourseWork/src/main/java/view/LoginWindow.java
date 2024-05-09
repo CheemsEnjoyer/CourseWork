@@ -4,7 +4,7 @@
  */
 package view;
 import javax.swing.*;
-import data.Users;
+import Entity.Users;
 /**
  *
  * @author Admin
@@ -209,9 +209,9 @@ public class LoginWindow extends javax.swing.JFrame {
 
     private void passwordToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordToggleActionPerformed
         if (passwordToggle.isSelected()) {
-            passwordField.setEchoChar((char) 0); // Показать символы
+            passwordField.setEchoChar((char) 0);
         } else {
-            passwordField.setEchoChar('*'); // Скрыть символы
+            passwordField.setEchoChar('*');
         }
     }//GEN-LAST:event_passwordToggleActionPerformed
 
